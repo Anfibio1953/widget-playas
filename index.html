@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Costero y Marítimo</title>
+  <style>
+    :root {
+      --bg-card: #f8fafc;
+      --border-card: #cbd5e1;
+      --text-main: #0f172a;
+      --text-sub: #475569;
+      --blue-accent: #0284c7;
+      --cyan-accent: #0891b2;
+      --box-bg: #ffffff;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    body {
+      background-color: var(--bg-card);
+      color: var(--text-main);
+      padding: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .widget-container {
+      width: 100%;
+      max-width: 580px;
+      background: var(--box-bg);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+    .header h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-tag {
+      font-size: 0.72rem;
+      background: #e0f2fe;
+      color: #0369a1;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 440px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .section-box {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px 12px;
+      background: #fdfdfd;
+    }
+    .section-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sec-atmos {
+      color: var(--blue-accent);
+      border-left: 3px solid var(--blue-accent);
+      padding-left: 6px;
+    }
+    .sec-mar {
+      color: var(--cyan-accent);
+      border-left: 3px solid var(--cyan-accent);
+      padding-left: 6px;
+    }
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 0;
+      border-bottom: 1px dashed #f1f5f9;
+      font-size: 0.85rem;
+    }
+    .data-row:last-child {
+      border-bottom: none;
+    }
+    .label {
+      color: var(--text-sub);
+      font-weight: 500;
+    }
+    .value {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .footer {
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      color: #94a3b8;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 8px;
+    }
+    .loading {
+      color: #64748b;
+      font-style: italic;
+    }
+    .uv-pill {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 0.78rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="widget-container">
+    <div class="header">
+      <h2>🌊 Condiciones Costeras y Marinas</h2>
+      <span class="status-tag" id="status-tag">En vivo</span>
+    </div>
+
+    <div class="grid">
+      <!-- Columna Atmosférica -->
+      <div class="section-box">
+        <div class="section-title sec-atmos">🌤️ Atmósfera</div>
+        
+        <div class="data-row">
+          <span class="label">Temperatura:</span>
+          <span class="value" id="val-temp"><span class="loading">Cargando...</span></span>
+        </div>
+        <div class="data-row">
+          <span class="label">Índice UV:</span>
+          <span class="value" id="val-uv"><span class="loading">--</span></span>
+        </div>
+        <div class="data-row">
+          <span class="label">Velocidad Viento:</span>
+          <span class="value" id="val-wind-speed"><span class="loading">--</span></span>
+        </div>
+        <div class="data-row">
+          <span class="label">Dirección Viento:</span>
+          <span class="value" id="val-wind-dir"><span class="loading">--</span></span>
+        </div>
+      </div>
+
+      <!-- Columna Marítima -->
+      <div class="section-box">
+        <div class="section-title sec-mar">⚓ Mar y Oleaje</div>
+        
+        <div class="data-row">
+          <span class="label">Temp. Agua:</span>
+          <span class="value" id="val-sea-temp"><span class="loading">Cargando...</span></span>
+        </div>
+        <div class="data-row">
+          <span class="label">Altura de Ola:</span>
+          <span class="value" id="val-wave-height"><span class="loading">--</span></span>
+        </div>
+        <div class="data-row">
+          <span class="label">Dirección Ola:</span>
+          <span class="value" id="val-wave-dir"><span class="loading">--</span></span>
+        </div>
+        <div class="data-row">
+          <span class="label">Período / Frecuencia:</span>
+          <span class="value" id="val-wave-period"><span class="loading">--</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span id="update-time">Actualizado: --:--</span>
+      <span>Fuente: Open-Meteo (Mar del Plata)</span>
+    </div>
+  </div>
+
+  <script>
+    // Coordenadas fijadas para Mar del Plata (Lat: -38.00, Lon: -57.55)
+    // Puedes cambiarlas si necesitas otra zona de la costa
+    const LAT = -38.00;
+    const LON = -57.55;
+
+    function gradosARumbo(grados) {
+      if (grados === null || isNaN(grados)) return "--";
+      const rumbos = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSO", "SO", "OSO", "O", "ONO", "NO", "NNO"];
+      const indice = Math.round(grados / 22.5) % 16;
+      return `${rumbos[indice]} (${Math.round(grados)}°)`;
+    }
+
+    function categorizarUV(uv) {
+      if (uv === null || isNaN(uv)) return "--";
+      let color = "#16a34a"; // verde
+      let texto = "Bajo";
+      if (uv >= 3 && uv < 6) { color = "#d97706"; texto = "Moderado"; }
+      else if (uv >= 6 && uv < 8) { color = "#ea580c"; texto = "Alto"; }
+      else if (uv >= 8 && uv < 11) { color = "#dc2626"; texto = "Muy Alto"; }
+      else if (uv >= 11) { color = "#7c3aed"; texto = "Extremo"; }
+      return `<span class="uv-pill" style="background-color: ${color}20; color: ${color}; font-weight:700;">${uv.toFixed(1)} (${texto})</span>`;
+    }
+
+    async function cargarDatos() {
+      try {
+        // 1. API Meteorológica (Atmósfera + UV)
+        const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&current=temperature_2m,wind_speed_10m,wind_direction_10m,uv_index&wind_speed_unit=kmh&timezone=auto`;
+        
+        // 2. API Marina (Olas y Mar)
+        const marineUrl = `https://marine-api.open-meteo.com/v1/marine?latitude=${LAT}&longitude=${LON}&current=wave_height,wave_direction,wave_period,sea_surface_temperature&timezone=auto`;
+
+        const [resWeather, resMarine] = await Promise.all([
+          fetch(weatherUrl).then(r => r.json()),
+          fetch(marineUrl).then(r => r.json())
+        ]);
+
+        // Inyectar datos atmosféricos
+        if (resWeather && resWeather.current) {
+          const w = resWeather.current;
+          document.getElementById('val-temp').textContent = `${Math.round(w.temperature_2m)} °C`;
+          document.getElementById('val-uv').innerHTML = categorizarUV(w.uv_index);
+          document.getElementById('val-wind-speed').textContent = `${Math.round(w.wind_speed_10m)} km/h`;
+          document.getElementById('val-wind-dir').textContent = gradosARumbo(w.wind_direction_10m);
+        }
+
+        // Inyectar datos marinos
+        if (resMarine && resMarine.current) {
+          const m = resMarine.current;
+          document.getElementById('val-sea-temp').textContent = m.sea_surface_temperature !== null ? `${m.sea_surface_temperature.toFixed(1)} °C` : "N/D";
+          document.getElementById('val-wave-height').textContent = m.wave_height !== null ? `${m.wave_height.toFixed(1)} m` : "N/D";
+          document.getElementById('val-wave-dir').textContent = gradosARumbo(m.wave_direction);
+          document.getElementById('val-wave-period').textContent = m.wave_period !== null ? `${m.wave_period.toFixed(1)} s` : "N/D";
+        }
+
+        // Hora local
+        const ahora = new Date();
+        const horaStr = ahora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('update-time').textContent = `Actualizado: ${horaStr}`;
+        document.getElementById('status-tag').textContent = "En vivo";
+      } catch (err) {
+        console.error("Error al cargar datos:", err);
+        document.getElementById('status-tag').textContent = "Reintentando...";
+      }
+    }
+
+    // Carga inicial y refresco automático cada 15 minutos
+    cargarDatos();
+    setInterval(cargarDatos, 15 * 60 * 1000);
+  </script>
+</body>
+</html>
